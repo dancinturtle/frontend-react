@@ -1,0 +1,28 @@
+version: '3'
+services:
+  web:
+    # build: .   This won't work this time because we don't have Dockerfile, we have Dockerfile.dev
+    build:
+      # where we want all our files and folders to come from, eg, we could be pulling from a nested folder
+      context: .
+      # location of the dockerfile used to construct the image
+      dockerfile: Dockerfile.dev
+      # so it means look in the pwd and use Dockerfile.dev
+    ports: 
+      - "3000:3000"
+    volumes:
+      # do NOT map node_modules inside the container to anything outside
+      - /app/node_modules
+      # we DO map the pwd outside the container to the app folder inside
+      - .:/app
+    
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # no need for ports
+    volumes:
+      - /app/node_modules
+      - .:/app
+    # override the startup command
+    command: ["npm", "run", "test"]
