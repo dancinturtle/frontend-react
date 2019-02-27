@@ -1,0 +1,16 @@
+sudo: required
+services:
+  # docker is required
+  - docker
+
+before_install:
+  # a series of steps before we run our tests
+  # we need to build our development docker image, give it a tag so we can refer to it later
+  - docker build -t dancinturtle/frontend-react -f Dockerfile.dev .
+
+# the commands that need to be executed to run our tests
+# if travis ever gets a status code that's not 0, it assumes the test failed
+# travis assumes that tests will exit, but npm run test sits and hangs and waits for input
+# we need to make sure we exit with -- -- coverage
+script:
+  - docker run dancinturtle/frontend-react npm run test -- --coverage
