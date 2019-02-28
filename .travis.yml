@@ -14,3 +14,26 @@ before_install:
 # we need to make sure we exit with -- -- coverage
 script:
   - docker run dancinturtle/frontend-react npm run test -- --coverage
+
+# configuration to tell travis how to deploy to aws
+deploy:
+  provider: elasticbeanstalk
+  # region depends on where you origianlly created your ebs instance, it comes from the url
+  # us-west-2, or us-east-3, etc befor ethe elasticbeanstalk.com
+  region: "us-east-2"
+  # app is the name we gave our ebs instance
+  app: "docker-react"
+  # env is whatever environment name ebs gave our instance
+  env: "DockerReact-env"
+  # s3 bucket, a hardrive running on aws. where all our files get copied over to
+  # find it by searching for s3 and browsing through your s3 buckets
+  bucket_name: "elasticbeanstalk-us-east-2-361064533843"
+  # the bucket is reused for all the elastic beanstalk environments you create
+  # find the path for your project, but it won't be created necessarily... by default use the same name as you provided for app
+  bucket_path: "docker-react"
+  # whenever we push to master, that's when we deploy
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
